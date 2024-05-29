@@ -20,7 +20,8 @@ const schema = new Schema<UserDocument>(
     },
     password: {
       type: String,
-      default: null
+      required: true,
+      select: false
     },
     avatar: {
       type: String,

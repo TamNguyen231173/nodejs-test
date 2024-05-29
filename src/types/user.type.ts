@@ -29,11 +29,17 @@ export interface VerifyCode {
   _id?: any;
   user: User;
   code: string;
-  hashCode: string;
   expiresTime: Date;
   resendDuration: Date;
   type: string;
   createdAt: Date;
+}
+
+export interface VerifyCodeInput {
+  user: User;
+  code: string;
+  expiresTime: Date;
+  type: string;
 }
 
 export type GlobalPermissions = 'create' | 'read' | 'update' | 'delete'

@@ -1,6 +1,4 @@
-type ImportedObject = {
-  [key: string]: any
-}
+import {ImportedObject} from "~/types/common.type";
 
 export const queryFilter = (object: ImportedObject, keys: string[] = []) => {
   return keys.reduce((obj: ImportedObject, key) => {

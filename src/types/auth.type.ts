@@ -15,7 +15,7 @@ export interface TokenPayload {
 }
 
 export interface Token {
-  id?: any
+  _id?: any
   user: User
   token: string
   type: EToken
