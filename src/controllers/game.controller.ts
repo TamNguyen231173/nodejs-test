@@ -31,7 +31,7 @@ class GameController {
   }
 
   public async getGames(req: Request, res: Response) {
-    const data = await gameService.getGames(Number(req.query.pageSize), Number(req.query.page), req.query.search as string)
+    const data = await gameService.getGames(Number(req.query.page), Number(req.query.pageSize), req.query.search as string)
     res.json({
       message: 'Get games',
       data
@@ -47,7 +47,7 @@ class GameController {
   }
 
   public async getMyGames(req: Request, res: Response) {
-    const data = await gameService.getMyGames(req.user._id, Number(req.query.pageSize), Number(req.query.page))
+    const data = await gameService.getMyGames(req.user._id, Number(req.query.page), Number(req.query.pageSize))
     res.json({
       message: 'Get my games',
       data

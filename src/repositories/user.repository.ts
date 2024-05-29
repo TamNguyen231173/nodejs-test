@@ -8,7 +8,7 @@ class UserRepository {
   }
 
   async findUserByEmail(email: string) {
-    return UserModel.findOne({ email }, { password: 1 }).lean()
+    return UserModel.findOne({ email },  "+password").lean()
   }
 
   async createUser(data: CreateUserInput) {
@@ -23,7 +23,15 @@ class UserRepository {
     return UserModel.updateOne({ _id: id }, { flag: false })
   }
 
-  async getUsers(pageSize = 10, page = 1) {
+  async getUsers(pageSize: number, page: number) {
+    if (!pageSize) {
+      pageSize = 10
+    }
+
+    if (!page) {
+      page = 1
+    }
+
     const totalDocuments = await UserModel.countDocuments();
     const totalPages = Math.ceil(totalDocuments / pageSize);
     const users = await UserModel.paginate({}, { page, limit: pageSize });

@@ -12,12 +12,9 @@ class UserController {
   }
 
   public async deleteUser(req: Request, res: Response) {
-    const data = await userService.deleteUser(req.user._id)
+    // await userService.deleteUser(req.params.id)
 
-    res.json({
-      message: 'User deleted',
-      data
-    })
+    res.json({message: 'User deleted'})
   }
 
   public async getUsers(req: Request, res: Response) {
@@ -30,7 +27,7 @@ class UserController {
   }
 
   public async getProfile(req: Request, res: Response) {
-    const data = await userService.getInfo(req.user.id)
+    const data = await userService.getInfo(req.user._id)
 
     res.json({
       message: 'Get user profile',

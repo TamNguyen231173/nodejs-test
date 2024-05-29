@@ -4,7 +4,7 @@ import {ImportedObject} from "~/types/common.type";
 
 class TokenRepository {
   async findByToken(token: string, type: string) {
-    return TokenModel.findOne({ token, type }).lean()
+    return TokenModel.findOne({ token, type }, {}, { populate: 'user' })
   }
 
   async deleteMany(userId: string) {
@@ -16,7 +16,7 @@ class TokenRepository {
   }
 
   async findOneAndDelete(filter: ImportedObject, options?: ImportedObject) {
-    return TokenModel.findOneAndDelete(filter, options).lean()
+    return TokenModel.findOneAndDelete(filter, options)
   }
 }
 

@@ -1,4 +1,5 @@
 import {JoiInstance} from "~/validations/index";
+import {pattern} from "~/utils/pattern";
 
 export const createGameValidation = {
   body: JoiInstance.object({
@@ -17,6 +18,6 @@ export const updateGameValidation = {
     image: JoiInstance.string().optional()
   }),
   params: JoiInstance.object({
-    id: JoiInstance.string().required(),
+    id: JoiInstance.custom(pattern.ObjectId).required()
   }),
 };

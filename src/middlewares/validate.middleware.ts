@@ -13,8 +13,7 @@ export const validateMiddleware = (schema: any) => (req: Request, res: Response,
     .validate(object)
 
   if (error) {
-    const errorMessage = ENV === 'development' ? error.message : 'Validation failed'
-    throw new ApiError(httpStatus.BAD_REQUEST, errorMessage)
+    throw new ApiError(httpStatus.BAD_REQUEST, error.message)
   }
 
   Object.assign(req, value)

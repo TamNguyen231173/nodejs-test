@@ -10,6 +10,7 @@ import {
   refreshTokenValidation, registerValidation, resetPasswordValidation
 } from "~/validations/auth.validation";
 import authMiddleware from "~/middlewares/auth.middleware";
+import "express-async-errors"
 
 export const authRouter = Router()
 

@@ -21,10 +21,10 @@ const authMiddleware = async (req: Request, res: Response, next: NextFunction) =
 
     const tokenData: any = jwt.verify(authToken, ACCESS_SECRET_KEY)
 
-    const user = await userRepository.findById(tokenData.id)
+    const user = await userRepository.findById(tokenData._id)
 
     if (!user) {
-      throw new ApiError(httpStatus.FORBIDDEN, 'User not found')
+      throw new ApiError(httpStatus.FORBIDDEN,  'Invalid user')
     }
 
     req.user = user

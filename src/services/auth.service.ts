@@ -70,7 +70,7 @@ class AuthService {
   public async verifyUser(code: string) {
     const verifyCode = await verifyCodeRepository.findByCode(code)
 
-    if (!verifyCode || !verifyCode.checkExpires()) {
+    if (!verifyCode || verifyCode.checkExpires()) {
       throw new ApiError(httpStatus.FORBIDDEN, 'Verify code is invalid or expired')
     }
 
@@ -137,8 +137,8 @@ class AuthService {
 
   public async refreshToken(token: string) {
     const refreshToken = await tokenRepository.findByToken(token, EToken.REFRESH_TOKEN)
-
-    if (!refreshToken || !refreshToken.checkExpires()) {
+    console.log(refreshToken?.checkExpires())
+    if (!refreshToken || refreshToken.checkExpires()) {
       throw new ApiError(httpStatus.FORBIDDEN, 'Refresh token is invalid or expired')
     }
 
@@ -149,6 +149,10 @@ class AuthService {
 
   public async changePassword(id: string, body: ChangePasswordInput) {
     const { oldPassword, newPassword, confirmPassword } = body
+
+    if (newPassword === oldPassword) {
+      throw new ApiError(httpStatus.BAD_REQUEST, 'New password must be different from old password')
+    }
 
     if (newPassword !== confirmPassword) {
       throw new ApiError(httpStatus.BAD_REQUEST, 'Passwords do not match')
@@ -183,7 +187,7 @@ class AuthService {
       token: (await refreshToken).toString(),
       type: EToken.REFRESH_TOKEN,
       user,
-      expiresTime: moment().add(REFRESH_TOKEN_LIFE, 'days').toDate()
+      expiresTime: moment().add(REFRESH_TOKEN_LIFE, 'day').toDate()
     })
 
     return refreshToken
@@ -203,7 +207,7 @@ class AuthService {
   public async verifyForgotPasswordCode(code: string) {
     const codeDoc = await verifyCodeRepository.findOneAndDelete({ code, type: EToken.FORGOT_PASSWORD })
 
-    if (!codeDoc || !codeDoc.checkExpires())
+    if (!codeDoc || codeDoc.checkExpires())
       throw new ApiError(httpStatus.FORBIDDEN, 'Verify code is invalid or expired')
 
     return await this.signForgotPasswordToken(codeDoc.user)
@@ -256,9 +260,9 @@ class AuthService {
       throw new ApiError(httpStatus.BAD_REQUEST, 'Passwords do not match')
     }
 
-    const token = await verifyCodeRepository.findOneAndDelete({ code: forgotPasswordToken, type: EToken.FORGOT_PASSWORD })
+    const token = await tokenRepository.findOneAndDelete({ token: forgotPasswordToken, type: EToken.FORGOT_PASSWORD }, { new: true})
 
-    if (!token || !token.checkExpires()) {
+    if (!token || token.checkExpires()) {
       throw new ApiError(httpStatus.FORBIDDEN, 'Verify code is invalid or expired')
     }
 
@@ -266,14 +270,23 @@ class AuthService {
   }
 
   private async signForgotPasswordToken(user: User) {
-    return signToken({
+    const token = await signToken({
       payload: {
         ...this.getPayload(user),
         type: EToken.FORGOT_PASSWORD
       },
       privateKey: SECRET_VERIFY_CODE,
-      options: { expiresIn: ACCESS_TOKEN_LIFE }
+      options: { expiresIn: EXPIRES_IN_VERIFIED_CODE }
     })
+
+    await tokenRepository.save({
+      token: token.toString(),
+      type: EToken.FORGOT_PASSWORD,
+      user,
+      expiresTime: moment().add(EXPIRES_IN_VERIFIED_CODE, 'minutes').toDate()
+    })
+
+    return token
   }
 
   private isUniqueVerifiedCode(verifiedCodes: VerifyCode[], code: string): boolean {

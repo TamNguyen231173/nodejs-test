@@ -2,6 +2,7 @@ import mongoose from 'mongoose'
 import { EMAIL_ADMIN, MONGO_DB_URI, PASSWORD_ADMIN } from '~/configs'
 import userRepository from '~/repositories/user.repository'
 import { ERole } from '~/enums'
+import bcrypt from "bcrypt";
 
 class DbService {
   async connect() {
@@ -21,7 +22,7 @@ class DbService {
     if (!adminUser) {
       await userRepository.createUser({
         email: EMAIL_ADMIN,
-        password: PASSWORD_ADMIN,
+        password: await bcrypt.hash(PASSWORD_ADMIN, 10),
         role: ERole.ADMIN,
         fullName: EMAIL_ADMIN,
         isVerified: true

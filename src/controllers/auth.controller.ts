@@ -1,10 +1,5 @@
 import { Request, Response } from 'express'
 import authService from '~/services/auth.service'
-import {EToken} from "~/enums";
-import verifyCodeRepository from "~/repositories/verify-code.repository";
-import {ApiError} from "~/utils/api-error";
-import httpStatus from "http-status";
-import {signToken} from "~/utils/jwt";
 import {ResetPasswordInput} from "~/types/auth.type";
 
 class AuthController {
@@ -17,7 +12,7 @@ class AuthController {
   }
 
   public async logout(req: Request, res: Response) {
-    await authService.logout(req.user, req.body.token)
+    await authService.logout(req.user, req.body.refreshToken)
     res.json({
       message: 'Logout successfully!'
     })
@@ -48,12 +43,12 @@ class AuthController {
   public async forgotPassword(req: Request, res: Response) {
     await authService.forgotPassword(req.body.email)
     res.json({
-      message: 'Forgot password successfully!'
+      message: 'Please check your email to reset password!'
     })
   }
 
   public async resetPassword(req: Request, res: Response) {
-    await authService.resetPassword(req.body as ResetPasswordInput)
+    await authService.resetPassword(req.body)
     res.json({
       message: 'Reset password successfully!'
     })

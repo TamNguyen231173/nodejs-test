@@ -14,7 +14,10 @@ class GameService {
     return game;
   }
 
-  public async getGames(page = 1, pageSize = 10, search = '') {
+  public async getGames(page: number, pageSize: number, search: string) {
+    if (!page) page = 1;
+    if (!pageSize) pageSize = 10;
+
     return gameRepository.getGames({
       page,
       pageSize,
@@ -25,11 +28,14 @@ class GameService {
   }
 
   public async getMyGames(userId: string, page: number, pageSize: number) {
+    if (!page) page = 1;
+    if (!pageSize) pageSize = 10;
+
     return gameRepository.getGames({
       page,
       pageSize,
       filter: {
-        author: userId 
+        author: userId
       }
     });
   }

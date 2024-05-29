@@ -12,7 +12,7 @@ class VerifyCodeRepository {
   }
 
   async findOneAndDelete(filter: ImportedObject) {
-    return VerifyCodeModel.findOneAndDelete(filter).lean()
+    return VerifyCodeModel.findOneAndDelete(filter, { new: true })
   }
 
   async findAll(filter: ImportedObject) {
