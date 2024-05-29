@@ -57,7 +57,7 @@ export interface NeedConfig {
 }
 
 export interface Role {
-  id: any
+  _id?: any
   name: string
   slug: string
   level: number

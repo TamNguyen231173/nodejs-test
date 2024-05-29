@@ -20,17 +20,20 @@ class UserRepository {
   }
 
   async deleteUser(id: string) {
-    return UserModel.findByIdAndDelete(id)
+    return UserModel.updateOne({ _id: id }, { flag: false })
   }
 
-  async getUsers(pageSize: number, page: number) {
+  async getUsers(pageSize = 10, page = 1) {
     const totalDocuments = await UserModel.countDocuments();
     const totalPages = Math.ceil(totalDocuments / pageSize);
-    const users = await UserModel.find().skip(pageSize * (page - 1)).limit(pageSize);
+    const users = await UserModel.paginate({}, { page, limit: pageSize });
+
     return {
-      users,
-      totalPages
-    };
+      users: users.docs,
+      totalDocuments,
+      totalPages,
+      page
+    }
   }
 }
 

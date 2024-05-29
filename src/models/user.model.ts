@@ -1,4 +1,4 @@
-import { Document, model, Schema } from 'mongoose'
+import { Document, model, Schema, PaginateModel } from 'mongoose'
 import paginate from 'mongoose-paginate-v2'
 import { excludeInFindQueriesIsDeleted, typesFindQueryMiddleware } from '.'
 import { User } from '~/types/user.type'
@@ -56,4 +56,4 @@ typesFindQueryMiddleware.forEach((type: any) => {
 
 schema.plugin(paginate)
 
-export const UserModel = model<UserDocument>('User', schema)
+export const UserModel = model<UserDocument, PaginateModel<UserDocument>>('User', schema)

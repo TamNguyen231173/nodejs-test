@@ -5,7 +5,8 @@ export const typesFindQueryMiddleware = [
   'findOneAndDelete',
   'findOneAndRemove',
   'update',
-  'updateOne'
+  'updateOne',
+  'paginate',
 ]
 
 export const excludeInFindQueriesIsDeleted = async function (this: any, next: () => void) {
