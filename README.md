@@ -28,7 +28,7 @@ The application comes with a default admin account. Use this account to manage g
 
 ## API Documentation
 
-For more details on how to use the API, please refer to our [Postman documentation]("https://elements.getpostman.com/redirect?entityId=18242201-f4f00979-51cd-486c-a17b-e918e51387ec&entityType=collection").
+For more details on how to use the API, please refer to our [Postman documentation](https://elements.getpostman.com/redirect?entityId=18242201-f4f00979-51cd-486c-a17b-e918e51387ec&entityType=collection).
 
 ## Contributing
 
