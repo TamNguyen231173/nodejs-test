@@ -1,0 +1,66 @@
+# Dependency directories
+node_modules/
+.pnpm/
+.pnp/
+lib/
+*.pnp.js
+
+# Environment variables
+.env*
+!.env.example
+
+# Logs and debug logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# Pid files
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage reports
+coverage/
+*.lcov
+.nyc_output/
+
+# Temporary directories
+.grunt/
+bower_components/
+build/
+Release/
+dist/
+
+# Package manager artifacts
+.npm/
+.yarn/
+*.tgz
+.yarn-integrity
+
+# Cache directories
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+.stylelintcache/
+.eslintcache/
+
+# Editor specific files
+.DS_Store
+*.sublime-project
+*.sublime-workspace
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+
+# Node-repl history
+.node_repl_history
+
+uploads/
+
+src/assets/firebase/
