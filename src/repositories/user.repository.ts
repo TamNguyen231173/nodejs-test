@@ -2,6 +2,10 @@ import {UserModel} from "~/models";
 import {CreateUserInput} from "~/types/user.type";
 
 class UserRepository {
+  async findById(id: string) {
+    return UserModel.findById(id)
+  }
+
   async findUserByEmail(email: string) {
     return UserModel.findOne({ email })
   }

@@ -2,7 +2,7 @@ import Joi from 'joi'
 import { queryFilter } from '~/utils/filter'
 import { ApiError } from '~/utils/api-error'
 import { NextFunction, Request, Response } from 'express'
-import { env } from '~/configs'
+import { ENV } from '~/configs'
 import httpStatus from 'http-status'
 
 export const validateMiddleware = (schema: any) => (req: Request, res: Response, next: NextFunction) => {
@@ -13,7 +13,7 @@ export const validateMiddleware = (schema: any) => (req: Request, res: Response,
     .validate(object)
 
   if (error) {
-    const errorMessage = env === 'development' ? error.message : 'Validation failed'
+    const errorMessage = ENV === 'development' ? error.message : 'Validation failed'
     throw new ApiError(httpStatus.BAD_REQUEST, errorMessage)
   }
 

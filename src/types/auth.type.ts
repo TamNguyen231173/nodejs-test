@@ -28,11 +28,6 @@ export interface AuthOptions {
     field: string
     userField: string
   }
-  refDocFilter?: {
-    model: string
-    localField: string
-    returnField: string
-  }
 }
 
 export interface EmailBody {
