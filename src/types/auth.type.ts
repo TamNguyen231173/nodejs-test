@@ -39,3 +39,9 @@ export interface EmailBody {
 export interface ResendVerifyInput {
   email?: string
 }
+
+export interface ResetPasswordInput {
+  forgotPasswordToken: string
+  newPassword: string
+  confirmPassword: string
+}

@@ -18,6 +18,7 @@ export const PASSWORD_ADMIN = process.env.PASSWORD_ADMIN || 'admin'
 
 // Verify code
 export const EXPIRES_IN_VERIFIED_CODE = process.env.EXPIRES_IN_VERIFIED_CODE || '30'
+export const SECRET_VERIFY_CODE = process.env.SECRET_VERIFY_CODE || 'secret-verify-code'
 
 // Nodemailer
 export const EMAIL_USER = process.env.EMAIL_USER || ''

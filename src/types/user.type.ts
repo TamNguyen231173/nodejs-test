@@ -23,6 +23,7 @@ export interface CreateUserInput {
 export interface UpdateUserInput {
   fullName?: string;
   avatar?: string;
+  password?: string;
 }
 
 export interface VerifyCode {
@@ -40,6 +41,12 @@ export interface VerifyCodeInput {
   code: string;
   expiresTime: Date;
   type: string;
+}
+
+export interface ChangePasswordInput {
+  oldPassword: string;
+  newPassword: string;
+  confirmPassword: string;
 }
 
 export type GlobalPermissions = 'create' | 'read' | 'update' | 'delete'

@@ -1,9 +1,9 @@
-import { LoginInput, ResendVerifyInput } from '~/types/auth.type'
+import {LoginInput, ResendVerifyInput, ResetPasswordInput} from '~/types/auth.type'
 import { ApiError } from '~/utils/api-error'
 import httpStatus from 'http-status'
 import userRepository from '~/repositories/user.repository'
 import bcrypt from 'bcrypt'
-import { User, VerifyCode } from '~/types/user.type'
+import {ChangePasswordInput, CreateUserInput, User, VerifyCode} from '~/types/user.type'
 import { signToken } from '~/utils/jwt'
 import { EToken } from '~/enums'
 import {
@@ -11,7 +11,7 @@ import {
   ACCESS_TOKEN_LIFE,
   EXPIRES_IN_VERIFIED_CODE,
   REFRESH_SECRET_KEY,
-  REFRESH_TOKEN_LIFE
+  REFRESH_TOKEN_LIFE, SECRET_VERIFY_CODE
 } from '~/configs'
 import tokenRepository from '~/repositories/token.repository'
 import moment from 'moment'
@@ -50,6 +50,21 @@ class AuthService {
       refreshToken,
       user
     }
+  }
+
+  public async register(user: CreateUserInput) {
+    const existedUser = await userRepository.findUserByEmail(user.email)
+
+    if (existedUser) {
+      throw new ApiError(httpStatus.CONFLICT, 'Email is already taken!')
+    }
+
+    const newUser = await userRepository.createUser({
+      ...user,
+      password: await bcrypt.hash(user.password, 10)
+    })
+
+    await this.sendVerifiedCodeEmail(EToken.VERIFY, newUser)
   }
 
   public async verifyUser(code: string) {
@@ -132,6 +147,28 @@ class AuthService {
     return await this.signAccessTokenAndRefreshToken(user)
   }
 
+  public async changePassword(id: string, body: ChangePasswordInput) {
+    const { oldPassword, newPassword, confirmPassword } = body
+
+    if (newPassword !== confirmPassword) {
+      throw new ApiError(httpStatus.BAD_REQUEST, 'Passwords do not match')
+    }
+
+    const user = await userRepository.findById(id, '+password')
+
+    if (!user) {
+      throw new ApiError(httpStatus.NOT_FOUND, 'User not found')
+    }
+
+    const isPasswordMatch = await bcrypt.compare(oldPassword, user.password as string)
+
+    if (!isPasswordMatch) {
+      throw new ApiError(httpStatus.UNAUTHORIZED, 'The provided password is incorrect')
+    }
+
+    await userRepository.update(user._id, { password: await bcrypt.hash(newPassword, 10) })
+  }
+
   public async signRefreshToken(user: User) {
     const refreshToken = signToken({
       payload: {
@@ -163,6 +200,15 @@ class AuthService {
     })
   }
 
+  public async verifyForgotPasswordCode(code: string) {
+    const codeDoc = await verifyCodeRepository.findOneAndDelete({ code, type: EToken.FORGOT_PASSWORD })
+
+    if (!codeDoc || !codeDoc.checkExpires())
+      throw new ApiError(httpStatus.FORBIDDEN, 'Verify code is invalid or expired')
+
+    return await this.signForgotPasswordToken(codeDoc.user)
+  }
+
   public async signAccessTokenAndRefreshToken(user: User) {
     const [accessToken, refreshToken] = await Promise.all([this.signAccessToken(user), this.signRefreshToken(user)])
     return {
@@ -190,6 +236,43 @@ class AuthService {
       code,
       type,
       expiresTime
+    })
+  }
+
+  public async forgotPassword(email: string) {
+    const user = await userRepository.findUserByEmail(email)
+
+    if (!user) {
+      throw new ApiError(httpStatus.NOT_FOUND, 'User not found')
+    }
+
+    await this.sendVerifiedCodeEmail(EToken.FORGOT_PASSWORD, user)
+  }
+
+  public async resetPassword(payload: ResetPasswordInput) {
+    const { forgotPasswordToken, newPassword, confirmPassword } = payload
+
+    if (newPassword !== confirmPassword) {
+      throw new ApiError(httpStatus.BAD_REQUEST, 'Passwords do not match')
+    }
+
+    const token = await verifyCodeRepository.findOneAndDelete({ code: forgotPasswordToken, type: EToken.FORGOT_PASSWORD })
+
+    if (!token || !token.checkExpires()) {
+      throw new ApiError(httpStatus.FORBIDDEN, 'Verify code is invalid or expired')
+    }
+
+    await userRepository.update(token.user._id, { password: await bcrypt.hash(newPassword, 10)})
+  }
+
+  private async signForgotPasswordToken(user: User) {
+    return signToken({
+      payload: {
+        ...this.getPayload(user),
+        type: EToken.FORGOT_PASSWORD
+      },
+      privateKey: SECRET_VERIFY_CODE,
+      options: { expiresIn: ACCESS_TOKEN_LIFE }
     })
   }
 

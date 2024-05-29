@@ -7,8 +7,12 @@ class VerifyCodeRepository {
     return VerifyCodeModel.findOne({ code })
   }
 
-  async deleteMany(filter: any) {
+  async deleteMany(filter: ImportedObject) {
     return VerifyCodeModel.deleteMany(filter)
+  }
+
+  async findOneAndDelete(filter: ImportedObject) {
+    return VerifyCodeModel.findOneAndDelete(filter).lean()
   }
 
   async findAll(filter: ImportedObject) {

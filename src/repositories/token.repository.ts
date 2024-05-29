@@ -1,5 +1,6 @@
 import {TokenModel} from "~/models/token.model";
 import {Token} from "~/types/auth.type";
+import {ImportedObject} from "~/types/common.type";
 
 class TokenRepository {
   async findByToken(token: string, type: string) {
@@ -12,6 +13,10 @@ class TokenRepository {
 
   async save(data: Token) {
     return TokenModel.create(data)
+  }
+
+  async findOneAndDelete(filter: ImportedObject, options?: ImportedObject) {
+    return TokenModel.findOneAndDelete(filter, options).lean()
   }
 }
 
